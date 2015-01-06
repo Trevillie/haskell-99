@@ -4,6 +4,9 @@
 module Problem_Set where
 
 import Data.List
+import Control.Applicative
+import Control.Monad
+import Data.Function ( on)
 
 -- (*) Find the last element of a list.
 solution_1 :: [a] -> a
@@ -201,13 +204,82 @@ solution_18 l m n = take (n+1 - m) . drop (m-1) $ l
 
 
 ----------------------------------------------------------------------------
+-- 1-18 == 1.6
+
+-- (**) Rotate a list N places to the left.
+-- Hint: Use the predefined functions length and (++).
+-- I DO think my solution here is better then those on https://www.haskell.org/haskellwiki/99_questions/Solutions/19
+solution_19 :: [a] -> Int -> [a]
+solution_19 xs n = let n' = if n > 0 then n else length xs + n
+                   in concat $ [drop n', take n'] <*> [xs]
+
+
+-- (*) Remove the K'th element from a list.
+-- *Main> removeAt 2 "abcd"
+-- ('b',"acd")
+solution_20 :: Int -> [a] -> (a, [a])
+solution_20 n xs = (xs !! (n-1), concat $ [take (n-1), drop n] <*> [xs])
+
+
+-- Insert an element at a given position into a list.
+solution_21 :: a -> [a] -> Int -> [a]
+solution_21 x xs n = take (n-1) xs ++ (x:drop (n-1) xs)
+
+
+-- Create a list containing all integers within a given range.
+solution_22 :: Int -> Int -> [Int]
+solution_22 x y = [x..y] 
+
+
+-- Extract a given number of randomly selected elements from a list.
+-- Prelude System.Random>rnd_select "abcdefgh" 3 >>= putStrLn
+-- solution_23 :: [a] -> Int
+
+----
+--  |
+--  | 23, 24, 25
+--  |
+----
+
+------------------
+-- Good Problem --
+------------------
+-- (**) Generate the combinations of K distinct objects chosen from the N elements of a list
+solution_26 :: Int -> [a] -> [[a]]
+solution_26 0 _ = [[]]
+solution_26 n xs = [y:ys' | y:ys <- tails xs, ys' <- solution_26 (n-1) ys]    -- move recursively in list comprehension
+
+solution_26' :: Int -> [a] -> [[a]]
+solution_26' 0 _ = return []
+solution_26' n xs = do y:xs' <- tails xs
+                       ys <- solution_26' (n-1) xs'
+                       return (y:ys)
+					   
+------------------
+-- Good Problem --
+------------------
+-- Group the elements of a set into disjoint subsets.
+helper_27 :: Int -> [a] -> [([a], [a])]
+helper_27 0 xs = [([], xs)]
+helper_27 _ [] = []
+helper_27 n (x:xs) = la ++ lb
+  where la = [(x:ys, zs) | (ys, zs) <- helper_27 (n-1) xs]
+        lb = [(ys, x:zs) | (ys, zs) <- helper_27  n    xs]      -- do not even do a pattern matching when xs is []
+
+solution_27 :: [Int] -> [a] -> [[[a]]]
+solution_27 [] _ = [[]]
+solution_27 num@(n:ns) names
+  | sum num /= length names = error "Invalid Partition Plan"
+  | any (<= 0) num          = error "Invalid Partition Plan"
+  | otherwise               = [xs:ys' | (xs, ys) <- helper_27 n names, ys' <- solution_27 ns ys]
+
+
+-- Sorting a list of lists according to length of sublists
+-- Again, we suppose that a list contains elements that are lists themselves.
+-- But this time the objective is to sort the elements of this list according to their length frequency;
+-- i.e., in the default, where sorting is done ascendingly, lists with rare lengths are placed first,
+-- others with a more frequent length come later.
+
+
 ----------------------------------------------------------------------------
----------                                                        -----------
----------    This Marks The End Of The First Day  -  2015.1.5    -----------
----------                                                        -----------
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-
-
-
-
+-- 1-22, 26, 27 == 1.7
