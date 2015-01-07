@@ -273,13 +273,71 @@ solution_27 num@(n:ns) names
   | any (<= 0) num          = error "Invalid Partition Plan"
   | otherwise               = [xs:ys' | (xs, ys) <- helper_27 n names, ys' <- solution_27 ns ys]
 
+  
+----------------------------------------------------------------------------
+-- 1-22, 26, 27 == 1.7
+
 
 -- Sorting a list of lists according to length of sublists
 -- Again, we suppose that a list contains elements that are lists themselves.
 -- But this time the objective is to sort the elements of this list according to their length frequency;
 -- i.e., in the default, where sorting is done ascendingly, lists with rare lengths are placed first,
 -- others with a more frequent length come later.
+solution_28 :: [[a]] -> [[a]]
+solution_28 = concat . sort' . group' . sort'
+  where sort'  = sortBy (compare `on` length)
+        group' = groupBy (\x y -> length x == length y)
+
+
+-- problem 29 is a gap
+-- problem 30 is a gap
+
+
+-- (**) Determine whether a given integer number is prime.		
+solution_31 :: Integral a => a -> Bool
+solution_31 n = and $ (n > 1) : map ((/= 0) . mod n) [x |x <- [2 .. (n-1)], x * x <= n]  -- this is slow
+                                                                                         -- 9999991 runs 7.98s roughly on :set +s
+
+solution_31' :: Integral a => a -> Bool
+solution_31' n | n < 4 = n /= 1                                                          -- | is the functional dependency key word, -> "when"
+solution_31' n = all ((/=0) . mod n) $ takeWhile (<= m) candidates 
+  where candidates = (2:3:[x + i | x <- [6,12..], i <- [-1,1]])
+        m = floor . sqrt $ fromIntegral n                                                -- this one finishes in no time
+                                                                                         -- why so fast ...
+
+
+-- (**) Determine the greatest common divisor of two positive integer numbers. Use Euclid's algorithm.
+solution_32 :: Integral a => a -> a -> a
+solution_32 x y
+  | y == 0    = abs x
+  | otherwise = solution_32 y $ mod x y
+
+
+-- (*) Determine whether two positive integer numbers are coprime.
+-- Two numbers are coprime if their greatest common divisor equals 1.
+solution_33 :: Integral a => a -> a -> Bool
+solution_33 x y = gcd x y == 1
+
+
+-- (**) Calculate Euler's totient function phi(m).
+-- Euler's so-called totient function phi(m) is defined as the number of positive integers r (1 <= r < m) that are coprime to m.
+-- Example: m = 10: r = 1,3,7,9; thus phi(m) = 4. Note the special case: phi(1) = 1.
+solution_34 :: Integral a => a -> Int
+solution_34 1 = 1
+solution_34 n = length [x | x <- [1 .. n-1], solution_33 x n]            -- this one is slow but I do not need a faster one ...
 
 
 ----------------------------------------------------------------------------
--- 1-22, 26, 27 == 1.7
+-- 1-22, 26-34 == 1.8
+
+
+-- well, i skipped some problems here
+
+
+-- Tree Defination
+data Tree a = Empty | Branch a (Tree a) (Tree a)
+  deriving (Show, Eq)
+
+-- Binary Tree Part
+-- (**) Construct completely balanced binary trees
+
