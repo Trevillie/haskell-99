@@ -340,4 +340,27 @@ data Tree a = Empty | Branch a (Tree a) (Tree a)
 
 -- Binary Tree Part
 -- (**) Construct completely balanced binary trees
+solution_55 :: Int -> [Tree Char]
+solution_55 0 = [Empty]
+solution_55 x = [Branch 'x' sub_1 sub_2 | l <- [base .. (base+addon)],
+                                          sub_1 <- solution_55 l,
+                                          sub_2 <- solution_55 (x - l - 1)]
+  where x'    = x - 1
+        base  = div x' 2
+        addon = mod x' 2
+
+
+-- (**) Symmetric binary trees
+equal_tree :: Tree a -> Tree a -> Bool
+equal_tree Empty            Empty            = True
+equal_tree (Branch _ x1 x2) (Branch _ y1 y2) = (equal_tree x1 y2) && (equal_tree x2 y1)
+equal_tree _                _                = False
+
+solution_56 :: Tree a -> Bool
+solution_56 Empty          = True
+solution_56 (Branch _ l r) = equal_tree l r
+
+
+----------------------------------------------------------------------------
+-- 1-22, 26-34, 55-56 == 1.9
 
