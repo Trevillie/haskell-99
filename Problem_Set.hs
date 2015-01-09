@@ -364,3 +364,42 @@ solution_56 (Branch _ l r) = equal_tree l r
 ----------------------------------------------------------------------------
 -- 1-22, 26-34, 55-56 == 1.9
 
+
+-- (**) Binary search trees (dictionaries)
+solution_57 :: Ord a => [a] -> Tree a
+solution_57 = foldl insert_bst Empty
+  where insert_bst Empty x = Branch x Empty Empty
+        insert_bst (Branch v l r) x 
+          | v == x = Branch v l r
+          | v >  x = Branch v (insert_bst l x) r
+          | v <  x = Branch v l (insert_bst r x) 
+
+
+-- (**) Generate-and-test paradigm
+-- Apply the generate-and-test paradigm to construct all symmetric,
+-- completely balanced binary trees with a given number of nodes.
+solution_58 :: Int -> [Tree Char]
+solution_58 n = [t | t <- solution_55 n, solution_56 t]     -- this is slow
+
+solution_58' :: Int -> [Tree Char]    -- a constructive building method which is much faster
+solution_58' n
+  | n `mod` 2 == 0 = []
+  | otherwise = [Branch 'x' t (reverse_tree t) | t <- solution_55 (n `div` 2)]
+      where reverse_tree Empty = Empty
+            reverse_tree (Branch 'x' l r) = Branch 'x' (reverse_tree r) (reverse_tree l)
+
+
+-- (**) Construct height-balanced binary trees
+-- Construct a list of all height-balanced binary trees with the given element and the given maximum height.
+-- no more than the maximum height
+solution_59 :: Int -> [Tree Char]
+solution_59 n = helper_59 n
+  where helper_59 0 = [Empty]
+        helper_59 1 = [Branch 'x' Empty Empty]
+        helper_59 n = [Branch 'x' l r | (i, j) <- [(n-1, n-1), (n-1, n-2), (n-2, n-1)],
+                                        l <- helper_59 i,
+                                        r <- helper_59 j]
+
+										
+----------------------------------------------------------------------------
+-- 1-22, 26-34, 55-59 == 1.10
