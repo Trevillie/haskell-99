@@ -7,6 +7,7 @@ import Data.List
 import Control.Applicative
 import Control.Monad
 import Data.Function ( on)
+import Data.Char     ( isAlphaNum, isLetter)
 
 -- (*) Find the last element of a list.
 solution_1 :: [a] -> a
@@ -403,3 +404,67 @@ solution_59 n = helper_59 n
 										
 ----------------------------------------------------------------------------
 -- 1-22, 26-34, 55-59 == 1.10
+
+
+-- minNodes :: Int -> Int
+-- maxHeight :: 
+
+
+data MTree a = Node a [MTree a]
+  deriving (Eq, Show)
+
+  
+tree1 = Node 'a' []
+tree2 = Node 'a' [Node 'b' []]
+tree3 = Node 'a' [Node 'b' [Node 'c' []]]
+tree4 = Node 'b' [Node 'd' [], Node 'e' []]
+tree5 = Node 'a' [
+                Node 'f' [Node 'g' []],
+                Node 'c' [],
+                Node 'b' [Node 'd' [], Node 'e' []]
+                ] 
+  
+
+-- (*) Count the nodes of a multiway tree.  
+solution_70c :: MTree a -> Int
+solution_70c (Node _ subs) = 1 + (sum $ map solution_70c subs)
+  
+
+-- (**) English number words
+-- On financial documents, like cheques, numbers must sometimes be written in full words.
+-- Example: 175 must be written as one-seven-five.
+-- Write a predicate full-words/1 to print (non-negative) integer numbers in full words.
+solution_95 :: Integer -> String
+solution_95 = intercalate "-" . map num2eng . show
+
+num2eng :: Char -> String
+num2eng '1' = "one"
+num2eng '2' = "two"
+num2eng '3' = "three"
+num2eng '4' = "four"
+num2eng '5' = "five"
+num2eng '6' = "six"
+num2eng '7' = "seven"
+num2eng '8' = "eight"
+num2eng '9' = "nine"
+num2eng '0' = "zero"
+
+
+-- (**) Syntax checker
+-- In a certain programming language (Ada) identifiers are defined by the syntax diagram below.
+-- Transform the syntax diagram into a system of syntax diagrams which do not contain loops;
+-- i.e. which are purely recursive. Using these modified diagrams, write a predicate identifier/1
+-- that can check whether or not a given string is a legal identifier.
+solution_96 :: String -> Bool
+solution_96 [] = False
+solution_96 (x:xs) = isLetter x && id_check xs               -- the first element of the name has different rule
+  where id_check []  = True                                  -- so splite the rule with pattern matching
+        id_check [x] = isAlphaNum x
+        id_check (x:y:zs)
+          | x == '-'     = (y /= '-') && id_check (y:zs)
+          | isAlphaNum x = id_check (y:zs)
+          | otherwise    = False
+		  
+
+----------------------------------------------------------------------------
+-- 1-22, 26-34, 55-59, 70c, 95, 96 == 1.11
