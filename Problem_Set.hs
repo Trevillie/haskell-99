@@ -339,6 +339,25 @@ solution_34 n = length [x | x <- [1 .. n-1], solution_33 x n]            -- this
 data Tree a = Empty | Branch a (Tree a) (Tree a)
   deriving (Show, Eq)
 
+leaf x = Branch x Empty Empty
+
+tree1 = Branch 'a' (Branch 'b' (leaf 'd')
+                               (leaf 'e'))
+                   (Branch 'c' Empty
+                               (Branch 'f' (leaf 'g')
+                                           Empty))
+
+-- A binary tree consisting of a root node only
+tree2 = Branch 'a' Empty Empty
+ 
+-- An empty binary tree
+tree3 = Empty
+ 
+-- A tree of integers
+tree4 = Branch 1 (Branch 2 Empty (Branch 4 Empty Empty))
+                 (Branch 2 Empty Empty)  
+
+
 -- Binary Tree Part
 -- (**) Construct completely balanced binary trees
 solution_55 :: Int -> [Tree Char]
@@ -414,11 +433,11 @@ data MTree a = Node a [MTree a]
   deriving (Eq, Show)
 
   
-tree1 = Node 'a' []
-tree2 = Node 'a' [Node 'b' []]
-tree3 = Node 'a' [Node 'b' [Node 'c' []]]
-tree4 = Node 'b' [Node 'd' [], Node 'e' []]
-tree5 = Node 'a' [
+mtree1 = Node 'a' []
+mtree2 = Node 'a' [Node 'b' []]
+mtree3 = Node 'a' [Node 'b' [Node 'c' []]]
+mtree4 = Node 'b' [Node 'd' [], Node 'e' []]
+mtree5 = Node 'a' [
                 Node 'f' [Node 'g' []],
                 Node 'c' [],
                 Node 'b' [Node 'd' [], Node 'e' []]
@@ -468,3 +487,33 @@ solution_96 (x:xs) = isLetter x && id_check xs               -- the first elemen
 
 ----------------------------------------------------------------------------
 -- 1-22, 26-34, 55-59, 70c, 95, 96 == 1.11
+
+
+-- Count the leaves of a binary tree
+-- A leaf is a node with no successors. Write a predicate count_leaves/2 to count them.
+solution_61 :: Tree a -> Int
+solution_61 Empty = 0
+solution_61 (Branch _ Empty Empty) = 1
+solution_61 (Branch _ l r) = solution_61 l + solution_61 r
+
+
+-- Collect the leaves of a binary tree in a list
+-- A leaf is a node with no successors. Write a predicate leaves/2 to collect them in a list.
+solution_61A :: Tree a -> [a]
+solution_61A Empty = []
+solution_61A (Branch x Empty Empty) = [x]
+solution_61A (Branch x l r) = solution_61A l ++ solution_61A r
+
+
+-- Collect the internal nodes of a binary tree in a list
+-- An internal node of a binary tree has either one or two non-empty successors.
+-- Write a predicate internals/2 to collect them in a list.
+solution_62 :: Tree a -> [a]
+solution_62 Empty = []
+solution_62 (Branch _ Empty Empty) = []
+solution_62 (Branch x l r) = x : (solution_62 l ++ solution_62 r)
+
+
+----------------------------------------------------------------------------
+-- 1-22, 26-34, 55-59, 61, 61A, 62, 70c, 95, 96 == 1.12
+
