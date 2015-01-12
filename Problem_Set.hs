@@ -517,3 +517,16 @@ solution_62 (Branch x l r) = x : (solution_62 l ++ solution_62 r)
 ----------------------------------------------------------------------------
 -- 1-22, 26-34, 55-59, 61, 61A, 62, 70c, 95, 96 == 1.12
 
+
+-- (*) Determine the internal path length of a tree.
+-- We define the internal path length of a multiway tree as the total sum of 
+-- the path lengths from the root to all nodes of the tree. By this definition,
+-- tree5 has an internal path length of 9.
+solution_71 :: MTree a -> Int
+solution_71 = calc_path 0
+  where calc_path n (Node _ lst) = n + (sum $ map (calc_path (1+n)) lst)
+  
+
+----------------------------------------------------------------------------
+-- 1-22, 26-34, 55-59, 61, 61A, 62, 70c, 71, 95, 96 == 1.13
+
